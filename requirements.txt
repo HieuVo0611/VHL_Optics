@@ -1,9 +1,8 @@
-PIL
-cv2
+pillow
+opencv-python
 joblib
 matplotlib
 numpy
-os
 pandas
-skimage
-sklearn
+scikit-image
+scikit-learn
