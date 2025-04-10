@@ -8,12 +8,14 @@ def create_meta_data(
         file_name=None,
         cols=None,
         )-> pd.DataFrame:
-    """
-    Create meta data for the specified directory. (./data/meta.csv).
+    """Create meta data for the specified directory. (./data/meta.csv).
 
-    :param data_dir: directory to create the meta data for
-    :param file_name: name of the file to create
-    :return: dataframe with the meta data
+    Args:
+        data_dir: directory to create the meta data for 
+        file_name: name of the file to create
+        cols: columns to use in the meta data
+
+    return: dataframe with the meta data
     """
     if data_dir is None:
         data_dir = os.path.join(DATA_DIR, 'full')
@@ -71,12 +73,13 @@ def load_data(
         data_dir= None, 
         file_name=None
         )-> pd.DataFrame:
-    """
-    Load data from the specified directory (./data/meta.csv).
+    """Load data from the specified directory (./data/meta.csv).
 
-    :param data_dir: directory to load the data from 
-    :param file_name: name of the file to load
-    :return: dataframe with the loaded data in
+    Args:
+        data_dir: directory to load the data from 
+        file_name: name of the file to load
+
+    return: dataframe with the loaded data in
     """
     if data_dir is None:
         data_dir = DATA_DIR
@@ -85,7 +88,7 @@ def load_data(
         create_meta_data()
         file_name = os.path.join(os.path.dirname(data_dir),META_COLORS)
     else:
-        file_name = os.path.join(data_dir, file_name)
+        file_name = os.path.join(os.path.dirname(data_dir), file_name)
     
     # with open(file_name, 'r') as f:
     #     data = f.read()

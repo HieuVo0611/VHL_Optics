@@ -1,39 +1,47 @@
 import os
 import shutil
 import cv2
-
+import pandas as pd
 from config import DATA_DIR, HSV_KITS
-from load import load_data
-from roi import cut_image, square_image, roi_image
+from loading import load_data
+from roi import runROI
 
 
-def process_data(data_dir=DATA_DIR):
-    """
-    Process the data by copying images to their respective directories and cropping them.
-    :param data_dir: directory to load the data from
-    :return: None
+def process_data(data_dir=DATA_DIR)-> None:
+    """Process the data by copying images to their respective directories and cropping them.
+
+    Args:
+        data_dir: directory to load the data from
     """
 
     # Load data
-    df = load_data()
+    df = load_data(file_name='metadata_colors_2025-04-06.csv')
     
     lst_phones = df['Phones'].unique()
     lst_types = df['Types'].unique()
 
+    if os.path.exists(os.path.join(os.path.dirname(data_dir), "failed_images.csv")):
+        lst_failed = pd.read_csv(os.path.join(os.path.dirname(data_dir), "failed_images.csv"))['Failed Images'].tolist()
+    else:
+        lst_failed = []
+
     # Copy the original image
     for phone in lst_phones:
-        os.makedirs(os.path.join(data_dir, phone), exist_ok=True)
+        os.makedirs(os.path.join(data_dir, "dataset",phone), exist_ok=True)
 
         for type_ in lst_types:
-            os.makedirs(os.path.join(data_dir,phone, type_), exist_ok=True)
-            os.makedirs(os.path.join(data_dir,phone, type_, "cropped"), exist_ok=True)
-        
-            # Process each image
+            os.makedirs(os.path.join(data_dir, "dataset",phone, type_), exist_ok=True)
+            os.makedirs(os.path.join(data_dir,"square image",phone, type_), exist_ok=True)
+            os.makedirs(os.path.join(data_dir,"roi image",phone, type_), exist_ok=True)
+            os.makedirs(os.path.join(data_dir,"background image",phone, type_), exist_ok=True)
+
+            # if phone == 'oppo':
+        # Process each image
             for index, row in df.iterrows():
                 if row['Phones'] == phone and row['Types'] == type_:
                     image_name = row['Id_imgs']
                     image_path = os.path.join(data_dir, "full",image_name)
-                    save_path = os.path.join(data_dir,phone, type_, image_name)
+                    save_path = os.path.join(data_dir,"dataset",phone, type_, image_name)
                     if os.path.exists(save_path):
                         print(f"Image already exists: {save_path}")
                     else:
@@ -43,25 +51,42 @@ def process_data(data_dir=DATA_DIR):
                     image = cv2.imread(save_path)
                     if image is None:
                         print(f"Error reading image: {save_path}")
+                        lst_failed.append(image_name)
                         continue
                     
                     # Crop image
-                    cropped_image = cut_image(image)
-                    cropped_image = square_image(cropped_image)
-                    if row['Phones'] == 'samsung':
-                        cropped_image = roi_image(cropped_image, kit=HSV_KITS['1.1.1.0.1'])
-                    else:
-                        cropped_image = roi_image(cropped_image, kit=HSV_KITS['1.1.1.1.0'])
+                    try:
+                        if row['Phones'] == 'samsung':
+                            raw_image, sample, background, _ = runROI(image=image, kit=HSV_KITS['1.1.1.0.1'])
+                        else:
+                            raw_image, sample, background, _ = runROI(image=image, kit=HSV_KITS['1.1.1.1.0'])
 
-                    if cropped_image is None:
-                        print(f"Error cropping image: {save_path}")
+                        if raw_image is None:
+                            print(f"Error cropping image: {save_path}")
+                            lst_failed.append(image_name)
+                            continue
+                    except Exception as e:
+                        print(f"Error cropping image: {save_path} - {e}")
+                        lst_failed.append(image_name)
                         continue
 
-                    # Save cropped image
-                    cropped_image_path = os.path.join(data_dir,phone, type_, "cropped", image_name)
-                    cv2.imwrite(cropped_image_path, cropped_image)
-                    print(f"Processed and saved image: {index}\n")
+                    # Save image
+                    raw_image_path = os.path.join(data_dir,"square image",phone, type_, image_name)
+                    cv2.imwrite(raw_image_path, raw_image)
 
+                    sample_path = os.path.join(data_dir,"roi image",phone, type_, image_name)
+                    cv2.imwrite(sample_path, sample)
+
+                    background_path = os.path.join(data_dir,"background image",phone, type_, image_name)
+                    cv2.imwrite(background_path, background)
+
+
+                    print(f"Processed and saved image: {save_path}\n")
+
+    # Save failed images to csv file
+    lst_failed= list(set(lst_failed))  # Remove duplicates
+    df_failed = pd.DataFrame(lst_failed, columns=['Failed Images'])  
+    df_failed.to_csv(os.path.join(os.path.dirname(data_dir), 'failed_images.csv'), index=False)             
 
 if __name__ == "__main__":
     process_data()

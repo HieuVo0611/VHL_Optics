@@ -1,13 +1,20 @@
 import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+from squares import find_squares
 from config import HSV_KITS, RATIO, SIZE_IMG, SIZE_CUT
 
-def cut_image(image, ratio=None, size=None):
-    """
-    Crop the image to the specified ratio and size.
-    :param image: The input image
-    :param ratio: The aspect ratio for cropping
-    :param size: The size of the cropped image
-    :return: The cropped image
+
+def cutImage(image, ratio=None, size=None):
+    """Crop the image to the specified ratio and size.
+
+    Args:
+        image: The input image
+        ratio: The aspect ratio for cropping
+        size: The size of the cropped image
+
+    return: The cropped image
     """
     # Set default values for ratio and size if not provided
     if ratio is None:
@@ -37,12 +44,15 @@ def cut_image(image, ratio=None, size=None):
     resized_image = cv2.resize(cropped_image, size, interpolation=cv2.INTER_AREA)
     return resized_image
 
-def square_image(image, size=None):
-    """
-    Crop the image to a square centered around the middle of the image.
-    :param image: The input image
-    :param size: The size of the square crop
-    :return: The cropped square image
+
+def resizeImage(image, size=None):
+    """Crop the image to a square centered around the middle of the image.
+
+    Args:
+        image: The input image
+        size: The size of the square crop
+
+    return: The cropped square image
     """
     # Set default size if not provided
     if size is None:
@@ -66,20 +76,25 @@ def square_image(image, size=None):
 
     return cropped_image
 
-def roi_image(cropped_image, kit=None, size=None):
-    """
-    Get the squared frame of the image.
-    :param cropped_image: The cropped image
+
+def getSquaredImage(image, kit=None, size=None):
+    """Get the squared frame of the image.
+
+    Args:
+        cropped_image: The cropped image
+        kit: The HSV kit for color detection
+        size: The size of the squared frame
+        
     :return: The squared frame of the image
     """
     # Set default kit and size if not provided
     if kit is None:
         kit = HSV_KITS['1.1.1.1.0']
     if size is None:
-        size = (SIZE_IMG, SIZE_IMG)
+        size = SIZE_IMG
     
     # Change the color space to HSV
-    img_hsv = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2HSV)
+    img_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Create a mask using the HSV kit
     mask = cv2.inRange(img_hsv, kit[0], kit[1])
@@ -90,33 +105,96 @@ def roi_image(cropped_image, kit=None, size=None):
         return None
     
     x, y, w, h = cv2.boundingRect(contours[0])
-    roi = cropped_image[y : y + h, x : x + w]
+    roi = image[y : y + h, x : x + w]
     # Resize the cropped image to the specified size
-    roi = cv2.resize(roi, size, interpolation=cv2.INTER_AREA)
+    roi = cv2.resize(roi, (size, size), interpolation=cv2.INTER_AREA)
 
     return roi
 
 
-# if __name__ == "__main__":
-#     # Example usage
-#     root = "D:/Work/VHL/VHL_Optics/data/hinhanh/poco f3/rhodamine b/"
-#     image_path = "1kI1M_ngochanpham274@gmail.com_2025-03-28 15_33_14_Tien_poco f3_Rhodamine B_100ppm_3_6__10.877064_106.6781564.jpg"
-#     image = cv2.imread(root+image_path)
-#     cropped_image = cut_image(image, ratio=RATIO, size=SIZE_CUT)
-#     squared_frame = square_image(cropped_image) 
-#     roi_image, counts = roi_image(squared_frame)
+def getSample(image):
+    # get the mask of the image
+    squares = find_squares(image)
+    x, y, w, h = cv2.boundingRect(squares[(len(squares)//2)])
+    sample = image[y:y+h, x:x+w]
+    # Create a mask with the size x, y, w, h
+    roi = np.zeros(image.shape[:2], dtype=np.uint8)
+    roi[y:y+h, x:x+w] = 255
+    # Reverse the mask
+    mask = cv2.bitwise_not(roi)
+    background = cv2.bitwise_and(image, image, mask=mask)
+    return sample, background, roi
 
-#     # Display contours on the original image
-#     plt.figure(figsize=(10, 5))
-#     plt.subplot(1, 2, 1)
-#     plt.imshow(cv2.cvtColor(squared_frame, cv2.COLOR_BGR2HSV))
-#     plt.title("Original Image")
-#     plt.axis("off")
 
-#     for contour in counts:
-#         cv2.drawContours(squared_frame, [contour.astype(int)], -1, (0, 255, 0), 1)
-#     plt.subplot(1, 2, 2)
-#     plt.imshow(cv2.cvtColor(squared_frame, cv2.COLOR_BGR2HSV))
-#     plt.title("Squared Frame with Contours")
-#     plt.axis("off")
-#     plt.show()
+
+def runROI(
+    image, 
+    ratio:float= None,
+    size_cut:int= None,
+    size_img:int= None,
+    kit=None, 
+    ):
+    """Run the ROI process on the image.
+
+    Args:
+        image: The input image (BGR format)
+        ratio: The aspect ratio for cropping
+        size_cut: The size of the cropped image
+        size_img: The size of the squared frame
+        kit: The HSV kit for color detection
+    """
+    if kit is None:
+        kit = HSV_KITS['1.1.1.1.0']
+
+    if size_cut is None:
+        size_cut = SIZE_CUT
+
+    if size_img is None:
+        size_img = SIZE_IMG
+
+    if ratio is None:
+        ratio = RATIO
+
+    # Crop and resize the image
+    cropped_image = cutImage(image=image, ratio=ratio, size=size_cut)
+    resize_image = resizeImage(image=cropped_image, size=size_img)
+
+    # Get the squared image using the specified HSV kit and size
+    squared_frame = getSquaredImage(image=resize_image, kit=kit, size=size_img)
+    sample, background, roi = getSample(image=squared_frame)
+
+    return squared_frame, sample, background, roi
+
+
+if __name__ == "__main__":
+    # Example usage
+    root = "d:/Work/VHL/VHL_Optics/data/hinhanh/dataset/oppo/coomassie blue/"
+    image_path = "rls8Q_ngochanpham274@gmail.com_2025-03-31 15_22_55_Tien_oppo_Coomassie Blue_30ppm_2_6__10.8769248_106.6780862.jpg"
+    image = cv2.imread(root+image_path)
+    cropped_image = cutImage(image, ratio=RATIO, size=SIZE_CUT)
+    squared_frame = resizeImage(cropped_image) 
+    roi_img = getSquaredImage(squared_frame, kit=HSV_KITS['1.1.1.1.0'])
+    # sample, background, roi = runROI(image)
+
+    # Display the images
+    plt.figure(figsize=(10, 5))
+    plt.subplot(1, 5, 1)
+    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.title("Original Image")
+
+    # plt.subplot(1, 5, 2)
+    # plt.imshow(cv2.cvtColor(roi_img, cv2.COLOR_BGR2RGB))
+    # plt.title("Squared Image")
+
+    # plt.subplot(1, 5, 3)
+    # plt.imshow(cv2.cvtColor(roi_img, cv2.COLOR_BGR2RGB))
+    # plt.title("Sample")
+
+    # plt.subplot(1, 5, 4)
+    # plt.imshow(cv2.cvtColor(background, cv2.COLOR_BGR2RGB))
+    # plt.title("Background")
+
+    # plt.subplot(1, 5, 5)
+    # plt.imshow(cv2.cvtColor(roi, cv2.COLOR_BGR2RGB))
+    # plt.title("ROI")
+    plt.show()
