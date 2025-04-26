@@ -28,9 +28,7 @@ def create_meta_data(
     if cols is None:
         cols = COLUMNS
     
-    # with open(file_name, 'w') as f:
-    #     f.write("Meta Data")
-    
+
     df = pd.DataFrame(columns=cols)
 
     for file in os.listdir(data_dir):
@@ -91,12 +89,9 @@ def load_data(
     else:
         file_name = os.path.join(os.path.dirname(data_dir), file_name)
     
-    # with open(file_name, 'r') as f:
-    #     data = f.read()
     data = pd.read_csv(file_name)
     return data
 
 
-# if __name__ == "__main__":
-#     data = load_data()
-#     print(data.head(10))
+if __name__ == "__main__":
+    data = load_data()

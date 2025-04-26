@@ -39,7 +39,7 @@ def find_squares(img):
 if __name__ == '__main__':
     from roi import cutImage, resizeImage, getSquaredImage
     # Use os.path for more robust path handling
-    fn = 'd:/Work/VHL/VHL_Optics/data/hinhanh/dataset/oppo/coomassie blue/'
+    fn = './data/hinhanh/dataset/oppo/coomassie blue/'
     path = 'rls8Q_ngochanpham274@gmail.com_2025-03-31 15_22_55_Tien_oppo_Coomassie Blue_30ppm_2_6__10.8769248_106.6780862.jpg'
     img = cv2.imread(fn+path)
     if img is None:

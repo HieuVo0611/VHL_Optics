@@ -99,8 +99,7 @@ def getFeature(
     if out_path is None:
         out_path = os.path.join(DATA_DIR, 'csv')
 
-        if not os.path.exists(out_path):
-            os.makedirs(out_path, exist_ok=True)
+    os.makedirs(out_path, exist_ok=True)
 
     extractor = FeatureExtractor()
 
@@ -136,7 +135,7 @@ def getFeature(
                 
 
 if __name__ == '__main__':
-    df = pd.read_csv('D:/Work/VHL/VHL_Optics/data/metadata_colors.csv')
+    df = pd.read_csv('./data/metadata_colors.csv')
 
     import time
     start = time.time()

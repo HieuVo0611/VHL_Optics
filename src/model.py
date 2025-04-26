@@ -39,13 +39,13 @@ def train_models(
 
     for phone in lst_phone:
         class_df = pd.read_csv(os.path.join(dir_path, f'clf_{phone}.csv'))
-        reg_df = pd.read_csv(os.path.join(dir_path, f'reg_{phone}.csv'))
+        reg_df = pd.read_csv(os.path.join(dir_path, f'rgs_{phone}.csv'))
 
         # --- Classification --- #
-        X_class = class_df.drop(columns=['id_img','label'])
-        y_class = class_df['label']
+        X_class = class_df.drop(columns=['id_img','type'])
+        y_class = class_df['type']
 
-        Xc_train, Xc_test, yc_train, yc_test = train_test_split(X_class, y_class, test_size=0.2, random_state=42)
+        Xc_train, Xc_test, yc_train, yc_test = train_test_split(X_class, y_class, test_size=0.2, random_state=42, stratify=y_class)
 
         scaler_c = StandardScaler()
         X_train_c_scaled = scaler_c.fit_transform(Xc_train)
@@ -54,6 +54,8 @@ def train_models(
         clf_model = RandomForestClassifier(n_estimators=100, random_state=42)
         clf_model.fit(X_train_c_scaled, yc_train)
         
+
+        print(f"\n================== {phone} report ==================")
         # Report
         class_preds = clf_model.predict(X_test_c_scaled)
         print("\n--- Classification Report ---")
@@ -62,25 +64,29 @@ def train_models(
         # Save model
         joblib.dump(clf_model, os.path.join(out_path,f'classifier_model_{phone}.pkl'))
 
-        # --- Regression --- #
+        # # --- Regression --- #
         
-        X_reg = reg_df.drop(columns=['id_img','ppm'])
-        y_reg = reg_df['ppm']
+        # X_reg = reg_df.drop(columns=['id_img','ppm'])
+        # y_reg = reg_df['ppm']
 
-        Xr_train, Xr_test, yr_train, yr_test = train_test_split(X_reg, y_reg, test_size=0.2, random_state=42)
+        # Xr_train, Xr_test, yr_train, yr_test = train_test_split(X_reg, y_reg, test_size=0.2, random_state=42, stratify=y_reg)
 
-        scaler_r = StandardScaler()
-        X_train_r_scaled = scaler_r.fit_transform(Xr_train)
-        X_test_r_scaled = scaler_r.transform(Xr_test)
-        reg_model = RandomForestRegressor(n_estimators=100, random_state=42)
-        reg_model.fit(X_train_r_scaled, yr_train)
+        # scaler_r = StandardScaler()
+        # X_train_r_scaled = scaler_r.fit_transform(Xr_train)
+        # X_test_r_scaled = scaler_r.transform(Xr_test)
+        # reg_model = RandomForestRegressor(n_estimators=100, random_state=42)
+        # reg_model.fit(X_train_r_scaled, yr_train)
 
-        # Report
-        reg_preds = reg_model.predict(X_test_r_scaled)
-        mse = mean_squared_error(yr_test, reg_preds)
-        print("\n--- Regression Report ---")
-        print(f"MSE: {mse:.4f}")
+        # # Report
+        # reg_preds = reg_model.predict(X_test_r_scaled)
+        # mse = mean_squared_error(yr_test, reg_preds)
+        # print("\n--- Regression Report ---")
+        # print(f"MSE: {mse:.4f}")
 
-        # Save model
-        joblib.dump(reg_model, os.path.join(out_path,f'regression_model_{phone}.pkl'))
+        # # Save model
+        # joblib.dump(reg_model, os.path.join(out_path,f'regression_model_{phone}.pkl'))
 
+
+if __name__ == '__main__':
+    meta_data = './data/metadata_colors.csv'
+    train_models(meta_data=meta_data)

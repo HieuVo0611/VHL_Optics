@@ -168,7 +168,7 @@ def runROI(
 
 # if __name__ == "__main__":
 #     # Example usage
-#     root = "d:/Work/VHL/VHL_Optics/data/hinhanh/dataset/oppo/coomassie blue/"
+#     root = "./data/hinhanh/dataset/oppo/coomassie blue/"
 #     image_path = "0APQO_ngochanpham274@gmail.com_2025-03-26 14_52_05_Tien_oppo_Coomassie Blue_20ppm_1_5___.jpg"
 #     image = cv2.imread(root+image_path)
 #     # cropped_image = cutImage(image, ratio=RATIO, size=SIZE_CUT)

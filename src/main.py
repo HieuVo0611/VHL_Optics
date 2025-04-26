@@ -42,3 +42,7 @@ def e2e ()->None:
 
     except:
         print('Training Model Fail')
+
+
+if __name__ == '__main__':
+    e2e()
