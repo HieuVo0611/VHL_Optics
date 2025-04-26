@@ -156,7 +156,7 @@ def runROI(
         ratio = RATIO
 
     # Crop and resize the image
-    cropped_image = cutImage(image=image, ratio=ratio, size=size_cut)
+    cropped_image = cutImage(image=image, ratio=ratio, size=size_cut)  #3/4
     resize_image = resizeImage(image=cropped_image, size=size_img)
 
     # Get the squared image using the specified HSV kit and size
@@ -166,35 +166,35 @@ def runROI(
     return squared_frame, sample, background, roi
 
 
-if __name__ == "__main__":
-    # Example usage
-    root = "d:/Work/VHL/VHL_Optics/data/hinhanh/dataset/oppo/coomassie blue/"
-    image_path = "rls8Q_ngochanpham274@gmail.com_2025-03-31 15_22_55_Tien_oppo_Coomassie Blue_30ppm_2_6__10.8769248_106.6780862.jpg"
-    image = cv2.imread(root+image_path)
-    cropped_image = cutImage(image, ratio=RATIO, size=SIZE_CUT)
-    squared_frame = resizeImage(cropped_image) 
-    roi_img = getSquaredImage(squared_frame, kit=HSV_KITS['1.1.1.1.0'])
-    # sample, background, roi = runROI(image)
+# if __name__ == "__main__":
+#     # Example usage
+#     root = "d:/Work/VHL/VHL_Optics/data/hinhanh/dataset/oppo/coomassie blue/"
+#     image_path = "0APQO_ngochanpham274@gmail.com_2025-03-26 14_52_05_Tien_oppo_Coomassie Blue_20ppm_1_5___.jpg"
+#     image = cv2.imread(root+image_path)
+#     # cropped_image = cutImage(image, ratio=RATIO, size=SIZE_CUT)
+#     # squared_frame = resizeImage(cropped_image) 
+#     # roi_img = getSquaredImage(squared_frame, kit=HSV_KITS['1.1.1.1.0'])
+#     squared_frame, sample, background, roi = runROI(image)
 
-    # Display the images
-    plt.figure(figsize=(10, 5))
-    plt.subplot(1, 5, 1)
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    plt.title("Original Image")
+#     # Display the images
+#     plt.figure(figsize=(10, 5))
+#     plt.subplot(1, 5, 1)
+#     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+#     plt.title("Original Image")
 
-    # plt.subplot(1, 5, 2)
-    # plt.imshow(cv2.cvtColor(roi_img, cv2.COLOR_BGR2RGB))
-    # plt.title("Squared Image")
+#     plt.subplot(1, 5, 2)
+#     plt.imshow(cv2.cvtColor(squared_frame, cv2.COLOR_BGR2RGB))
+#     plt.title("Squared Image")
 
-    # plt.subplot(1, 5, 3)
-    # plt.imshow(cv2.cvtColor(roi_img, cv2.COLOR_BGR2RGB))
-    # plt.title("Sample")
+#     plt.subplot(1, 5, 3)
+#     plt.imshow(cv2.cvtColor(sample, cv2.COLOR_BGR2RGB))
+#     plt.title("Sample")
 
-    # plt.subplot(1, 5, 4)
-    # plt.imshow(cv2.cvtColor(background, cv2.COLOR_BGR2RGB))
-    # plt.title("Background")
+#     plt.subplot(1, 5, 4)
+#     plt.imshow(cv2.cvtColor(background, cv2.COLOR_BGR2RGB))
+#     plt.title("Background")
 
-    # plt.subplot(1, 5, 5)
-    # plt.imshow(cv2.cvtColor(roi, cv2.COLOR_BGR2RGB))
-    # plt.title("ROI")
-    plt.show()
+#     plt.subplot(1, 5, 5)
+#     plt.imshow(cv2.cvtColor(roi, cv2.COLOR_BGR2RGB))
+#     plt.title("ROI")
+#     plt.show()

@@ -21,7 +21,7 @@ def create_meta_data(
         data_dir = os.path.join(DATA_DIR, 'full')
 
     if file_name is None:
-        file_name = os.path.join(os.path.dirname(os.path.dirname(data_dir)),META_COLORS)
+        file_name = META_COLORS
     else:
         pass
     
@@ -38,8 +38,9 @@ def create_meta_data(
         try:
             if any(file.lower().endswith(ext) for ext in IMAGE_EXTENSIONS):
                 if '2025' in file:
-                    name_sample = file.strip().split(' ',1)[-1].strip().split('_',3)[-1].strip()
-                    sample.append(name_sample)
+                    # name_sample = file.strip().split(' ',1)[-1].strip().split('_',3)[-1].strip()
+                    # sample.append(name_sample)
+                    sample.append(file)
                     sample_info = file.split('ppm')
                     sample.append(sample_info[0].strip().split('_')[-2].lower())
                     sample.append(sample_info[0].strip().split('_')[-1])

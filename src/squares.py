@@ -1,7 +1,5 @@
 import numpy as np
 import cv2
-import os
-import statistics
 from matplotlib import pyplot as plt
 
 def angle_cos(p0, p1, p2):

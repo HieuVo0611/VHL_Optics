@@ -1,13 +1,22 @@
 import os
-import datetime
 
+#Root directory of the project
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(ROOT_DIR, "data", "hinhanh")
 
+if os.path.exists(os.path.join(ROOT_DIR, "data", "hinhanh")):
+    DATA_DIR = os.path.join(ROOT_DIR, "data", "hinhanh")
+else:
+    os.makedirs(os.path.join(ROOT_DIR, "data", "hinhanh"), exist_ok=True)
+    DATA_DIR = os.path.join(ROOT_DIR, "data", "hinhanh")
+
+#Constants for data processing
 COLUMNS = ['Id_imgs', 'Types', 'ppm', 'Phones', 'Num_of_photos', 'Date']
+# COLUMNS_STD = ['Id_imgs', 'Types', 'Mean_B', 'Mean_G', 'Mean_R', 'Mode_B', 'Mode_G', 'Mode_R', 'Std_B', 'Std_G', 'Std_R']
 IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff']
-META_COLORS = f"metadata_colors_{datetime.date.today()}.csv"
+META_COLORS = os.path.join(os.path.dirname(DATA_DIR),"metadata_colors.csv")
 
+
+#Constants for image processing
 SIZE_IMG = 224
 SIZE_CUT = (300, 400)
 RATIO = 0.75
