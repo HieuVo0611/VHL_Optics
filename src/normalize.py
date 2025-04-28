@@ -2,10 +2,11 @@ import os
 import cv2
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from skimage.feature import graycomatrix, graycoprops
 from skimage.measure import shannon_entropy
 
-from config import DATA_DIR, IMAGE_EXTENSIONS
+from config import DATA_DIR, META_COLORS,IMAGE_EXTENSIONS
 
 class FeatureExtractor:
     def __init__(self, hue_bins=16):
@@ -85,13 +86,14 @@ class FeatureExtractor:
 
 
 def getFeature(
-        df:pd.DataFrame=None, 
+        df_path:str=None, 
         dir_path:str=None, 
         out_path:str=None
     )->None:
 
-    if df is None:
-        df = pd.read_csv(os.path.join(os.path.dirname(DATA_DIR)), 'metadata_colors.csv')
+    if df_path is None:
+        df_path = META_COLORS
+    df = pd.read_csv(df_path)
 
     if dir_path is None:
         dir_path = os.path.join(DATA_DIR, 'square image')
@@ -109,37 +111,45 @@ def getFeature(
 
         clf_images = []
         rgs_images = []
+        # Initialize progress bar
+        total_images = len(df_phone)
+        with tqdm(total=total_images, desc=f"Feature Extracting [{phone}]", unit="image") as pbar:
+            for _, row in df_phone.iterrows():
+                id_imgs = row['Id_imgs']
+                types = row['Types']
+                ppm = row['ppm']
+                type_path = os.path.join(dir_path, phone, types)
 
-        for _, row in df_phone.iterrows():
-            id_imgs = row['Id_imgs']
-            types = row['Types']
-            ppm = row['ppm']
-            type_path = os.path.join(dir_path, phone, types)
+                if any(str(id_imgs).lower().endswith(ext) for ext in IMAGE_EXTENSIONS):
+                    image_path = os.path.join(type_path, id_imgs)
+                    
+                    if not os.path.exists(image_path):
+                        pbar.update(1)
+                        continue
 
-            if any(str(id_imgs).lower().endswith(ext) for ext in IMAGE_EXTENSIONS):
-                image_path = os.path.join(type_path, id_imgs)
-                clf_image, rgs_image = extractor.extract_features(image_path, id_imgs, types, ppm)
+                    clf_image, rgs_image = extractor.extract_features(image_path, id_imgs, types, ppm)
 
-                if (clf_image is not None) and (rgs_image is not None):
-                    clf_images.append(clf_image)
-                    rgs_images.append(rgs_image)
-        
-        clf_images =pd.DataFrame(clf_images)
-        rgs_images =pd.DataFrame(rgs_images)
+                    if (clf_image is not None) and (rgs_image is not None):
+                        clf_images.append(clf_image)
+                        rgs_images.append(rgs_image)
+                    
+                    # Update progress bar
+                    pbar.update(1)
+            
+            clf_images =pd.DataFrame(clf_images)
+            rgs_images =pd.DataFrame(rgs_images)
 
-        clf_images.to_csv(os.path.join(out_path,f'clf_{phone}.csv'), index=False)
-        rgs_images.to_csv(os.path.join(out_path,f'rgs_{phone}.csv'), index=False)
+            clf_images.to_csv(os.path.join(out_path,f'clf_{phone}.csv'), index=False)
+            rgs_images.to_csv(os.path.join(out_path,f'rgs_{phone}.csv'), index=False)
 
-        print(f"Extract {phone} DONE!!!")
+        # print(f"Extract {phone} DONE!!!")
 
                 
 
 if __name__ == '__main__':
-    df = pd.read_csv('./data/metadata_colors.csv')
-
     import time
     start = time.time()
 
-    getFeature(df=df, dir_path=os.path.join(DATA_DIR,'square image'))
+    getFeature(df_path=META_COLORS, dir_path=os.path.join(DATA_DIR,'square image'))
 
     print('\nTime processing: ',time.time()- start)     

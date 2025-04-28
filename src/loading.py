@@ -4,9 +4,12 @@ from config import DATA_DIR, META_COLORS, COLUMNS, IMAGE_EXTENSIONS
 
 
 def create_meta_data(
-        data_dir= None, 
-        file_name=None,
-        cols=None,
+        data_dir:str= None, 
+        out_dir:str=None,
+        cols:list=None,
+        lst_failed:list=None,
+        labels:int=3,
+        phones:int=5
         )-> pd.DataFrame:
     """Create meta data for the specified directory. (./data/meta.csv).
 
@@ -20,10 +23,8 @@ def create_meta_data(
     if data_dir is None:
         data_dir = os.path.join(DATA_DIR, 'full')
 
-    if file_name is None:
-        file_name = META_COLORS
-    else:
-        pass
+    if out_dir is None:
+        out_dir = META_COLORS
     
     if cols is None:
         cols = COLUMNS
@@ -49,29 +50,33 @@ def create_meta_data(
                 sample_df = pd.DataFrame([sample], columns=cols)
                 df = pd.concat([df, sample_df], ignore_index=True)
         except Exception as e:
+            error = [file, "Can't get image into metadata"]
+            if error not in lst_failed:
+                lst_failed.append(error)
             print(f"Error processing file {file}: {e}")
 
     # Only keep the first 3 most common types of 'Types' in the dataset
-    types_to_keep = df['Types'].value_counts().nlargest(3).index
+    types_to_keep = df['Types'].value_counts().nlargest(labels).index
     df = df[df['Types'].isin(types_to_keep)]
     df.reset_index(drop=True, inplace=True)
 
     # Only keep the first 5 most common types of 'Phones' in the dataset
-    phones_to_keep = df['Phones'].value_counts().nlargest(5).index
+    phones_to_keep = df['Phones'].value_counts().nlargest(phones).index
     df = df[df['Phones'].isin(phones_to_keep)]
     df.reset_index(drop=True, inplace=True)
 
     # Sort the dataframe by 'Date'
     df.sort_values(by='Date', inplace=True)
 
-    df.to_csv(file_name, index=False)
-
+    df.to_csv(out_dir, index=False)
+    return lst_failed
 
 
 def load_data(
         data_dir= None, 
-        file_name=None
-        )-> pd.DataFrame:
+        df_path=None,
+        lst_failed:list=None,
+        ):
     """Load data from the specified directory (./data/meta.csv).
 
     Args:
@@ -83,14 +88,15 @@ def load_data(
     if data_dir is None:
         data_dir = DATA_DIR
 
-    if file_name is None:
-        create_meta_data()
-        file_name = os.path.join(os.path.dirname(data_dir),META_COLORS)
+    if df_path is None:
+        lst_failed = create_meta_data(lst_failed=lst_failed)
+        df_path = META_COLORS
     else:
-        file_name = os.path.join(os.path.dirname(data_dir), file_name)
-    
-    data = pd.read_csv(file_name)
-    return data
+        if not os.path.exists(META_COLORS):
+            lst_failed = create_meta_data(lst_failed=lst_failed)
+
+    data = pd.read_csv(df_path)
+    return data, lst_failed
 
 
 if __name__ == "__main__":

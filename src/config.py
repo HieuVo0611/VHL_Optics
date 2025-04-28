@@ -3,17 +3,17 @@ import os
 #Root directory of the project
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-if os.path.exists(os.path.join(ROOT_DIR, "data", "hinhanh")):
-    DATA_DIR = os.path.join(ROOT_DIR, "data", "hinhanh")
+if os.path.exists(os.path.join(ROOT_DIR, "data")):
+    DATA_DIR = os.path.join(ROOT_DIR, "data")
 else:
-    os.makedirs(os.path.join(ROOT_DIR, "data", "hinhanh"), exist_ok=True)
-    DATA_DIR = os.path.join(ROOT_DIR, "data", "hinhanh")
+    os.makedirs(os.path.join(ROOT_DIR, "data"), exist_ok=True)
+    DATA_DIR = os.path.join(ROOT_DIR, "data")
 
 #Constants for data processing
 COLUMNS = ['Id_imgs', 'Types', 'ppm', 'Phones', 'Num_of_photos', 'Date']
 # COLUMNS_STD = ['Id_imgs', 'Types', 'Mean_B', 'Mean_G', 'Mean_R', 'Mode_B', 'Mode_G', 'Mode_R', 'Std_B', 'Std_G', 'Std_R']
 IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff']
-META_COLORS = os.path.join(os.path.dirname(DATA_DIR),"metadata_colors.csv")
+META_COLORS = os.path.join(DATA_DIR,"metadata_colors.csv")
 
 
 #Constants for image processing

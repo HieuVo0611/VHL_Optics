@@ -9,9 +9,11 @@ import pandas as pd
 from config import DATA_DIR, META_COLORS
 
 def train_models(
-        meta_data:str = None, 
+        meta_path:str = None, 
         dir_path:str = None,
-          out_path:str = None
+        out_path:str = None,
+        split:float = 0.2,
+        n_estimators:int = 1000,
     )->None:
     """
     Train classification and regression models from extracted features.
@@ -26,32 +28,32 @@ def train_models(
     if dir_path is None:
         dir_path = os.path.join(DATA_DIR, 'csv')
     
-    if meta_data is None:
-        meta_data = META_COLORS
+    if meta_path is None:
+        meta_path = META_COLORS
 
     if out_path is None:
-        out_path = os.path.join(os.path.dirname(DATA_DIR),'models')
+        out_path = os.path.join(DATA_DIR,'models')
     os.makedirs(out_path, exist_ok=True)
 
 
-    df = pd.read_csv(meta_data)
+    df = pd.read_csv(meta_path)
     lst_phone = df['Phones'].unique().tolist()
 
     for phone in lst_phone:
         class_df = pd.read_csv(os.path.join(dir_path, f'clf_{phone}.csv'))
-        reg_df = pd.read_csv(os.path.join(dir_path, f'rgs_{phone}.csv'))
+        # reg_df = pd.read_csv(os.path.join(dir_path, f'rgs_{phone}.csv'))
 
         # --- Classification --- #
         X_class = class_df.drop(columns=['id_img','type'])
         y_class = class_df['type']
 
-        Xc_train, Xc_test, yc_train, yc_test = train_test_split(X_class, y_class, test_size=0.2, random_state=42, stratify=y_class)
+        Xc_train, Xc_test, yc_train, yc_test = train_test_split(X_class, y_class, test_size=split, random_state=42, stratify=y_class)
 
         scaler_c = StandardScaler()
         X_train_c_scaled = scaler_c.fit_transform(Xc_train)
         X_test_c_scaled = scaler_c.transform(Xc_test)
 
-        clf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+        clf_model = RandomForestClassifier(n_estimators=n_estimators, random_state=42)
         clf_model.fit(X_train_c_scaled, yc_train)
         
 
@@ -88,5 +90,5 @@ def train_models(
 
 
 if __name__ == '__main__':
-    meta_data = './data/metadata_colors.csv'
-    train_models(meta_data=meta_data)
+    meta_path = META_COLORS
+    train_models(meta_path=meta_path)

@@ -11,37 +11,42 @@ def e2e ()->None:
     try:
         process_data(
         data_dir=DATA_DIR,
-        meta_data=META_COLORS,
-        folder_name='full')
+        meta_path=META_COLORS,
+        folder_name='full',
+        )
         
-        print('Processing Data Success!')
+        print('\nProcessing Data Success!\n')
         
     except:
-        print('Processing Data Fail')
+        print('\nProcessing Data Fail\n')
 
 
     try:    
         getFeature(
-            df=META_COLORS,
+            df_path=META_COLORS,
             dir_path= os.path.join(DATA_DIR, 'square image'),
+            out_path= os.path.join(DATA_DIR, 'csv')
         )
 
-        print('Feature Extracting Success!')
+        print('\nFeature Extracting Success!\n')
 
     except:
-        print('Feature Extracting Fail')
+        print('\nFeature Extracting Fail\n')
 
 
     try:
         train_models(
-            metadata=META_COLORS,
+            meta_path=META_COLORS,
             dir_path=os.path.join(DATA_DIR, 'csv'),
+            out_path=os.path.join(DATA_DIR, 'models'),
+            split= 0.4,
+            n_estimators= 1000,
         )
 
-        print('Training Model Success!')
+        print('\nTraining Model Success!\n')
 
     except:
-        print('Training Model Fail')
+        print('\nTraining Model Fail\n')
 
 
 if __name__ == '__main__':
