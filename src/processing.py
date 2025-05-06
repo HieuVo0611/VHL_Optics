@@ -65,11 +65,11 @@ def process_data(
                         # Crop image
                         try:
                             if row['Phones'] == 'samsung':
-                                raw_image, sample, background, _ = runROI(image=image, kit=HSV_KITS['1.1.1.0.1'])
+                                squared_image, sample, background, _ = runROI(image=image, kit=HSV_KITS['1.1.1.0.1'])
                             else:
-                                raw_image, sample, background, _ = runROI(image=image, kit=HSV_KITS['1.1.1.1.0'])
+                                squared_image, sample, background, _ = runROI(image=image, kit=HSV_KITS['1.1.1.1.0'])
 
-                            if raw_image is None:
+                            if squared_image is None:
                                 error = [image_name, "Error cropping image"]
                                 if error not in lst_failed:
                                     lst_failed.append(error)
@@ -83,8 +83,8 @@ def process_data(
                             continue
 
                         # Save image
-                        raw_image_path = os.path.join(data_dir, "square image", phone, type_, image_name)
-                        cv2.imwrite(raw_image_path, raw_image)
+                        squared_image_path = os.path.join(data_dir, "square image", phone, type_, image_name)
+                        cv2.imwrite(squared_image_path, squared_image)
 
                         sample_path = os.path.join(data_dir, "roi image", phone, type_, image_name)
                         cv2.imwrite(sample_path, sample)

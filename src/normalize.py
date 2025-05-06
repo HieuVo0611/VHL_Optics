@@ -12,7 +12,7 @@ class FeatureExtractor:
     def __init__(self, hue_bins=16):
         self.hue_bins = hue_bins
 
-    def extract_features(self, image_path: str, id_imgs:str, types:str, ppm:float):
+    def extract_features(self, image_path: str, id_imgs:str, types:str='', ppm:float=0.0):
         classification_features = {}
         regression_features = {}
 

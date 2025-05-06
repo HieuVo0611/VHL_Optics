@@ -65,6 +65,7 @@ def train_models(
 
         # Save model
         joblib.dump(clf_model, os.path.join(out_path,f'classifier_model_{phone}.pkl'))
+        joblib.dump(scaler_c, os.path.join(out_path,f'classifier_scaler_model_{phone}.pkl'))
 
         # # --- Regression --- #
         
