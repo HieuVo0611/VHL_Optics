@@ -25,21 +25,20 @@ VHL_Optics là một dự án AI được thiết kế để phân tích dữ li
 ```
    VHL_Optics/ 
    ├── src/ 
-   │ ├── __init__.py # Tệp khởi tạo module 
-   │ ├── config.py # Cấu hình dự án 
-   │ ├── loading.py # Tải và tạo metadata 
-   │ ├── processing.py # Xử lý và tổ chức dữ liệu hình ảnh 
-   │ ├── normalize.py # Trích xuất đặc trưng từ hình ảnh 
-   │ ├── model.py # Huấn luyện mô hình phân loại và hồi quy 
-   │ ├── roi.py # Xử lý vùng quan tâm (ROI) 
-   │ ├── squares.py # Phát hiện các vùng hình vuông trong hình ảnh 
-   │ ├── main.py # Pipeline tự động 
-   ├── data/ # Thư mục chứa dữ liệu 
-   │ ├── full/ # Dữ liệu hình ảnh gốc 
-   │ ├── metadata_colors.csv # Metadata của hình ảnh 
-   ├── requirements.txt # Danh sách các thư viện cần thiết 
-   ├── README.md # Tài liệu dự án 
-   ├── LICENSE # Giấy phép sử dụng
+   │ ├── __init__.py      # Tệp khởi tạo module 
+   │ ├── config.py        # Cấu hình dự án 
+   │ ├── loading.py       # Tải và tạo metadata 
+   │ ├── processing.py    # Xử lý và tổ chức dữ liệu hình ảnh 
+   │ ├── normalize.py     # Trích xuất đặc trưng từ hình ảnh 
+   │ ├── model.py         # Huấn luyện mô hình phân loại và hồi quy 
+   │ ├── roi.py           # Xử lý vùng quan tâm (ROI) 
+   │ ├── squares.py       # Phát hiện các vùng hình vuông trong hình ảnh 
+   │ ├── main.py          # Pipeline tự động 
+   ├── data/              # Thư mục chứa dữ liệu 
+   │ ├── full/            # Dữ liệu hình ảnh gốc 
+   ├── requirements.txt   # Danh sách các thư viện cần thiết 
+   ├── README.md          # Tài liệu dự án 
+   ├── LICENSE            # Giấy phép sử dụng
 ```
 ## Hướng dẫn cài đặt
 
