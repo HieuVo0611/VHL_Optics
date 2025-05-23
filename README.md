@@ -7,17 +7,26 @@ VHL_Optics là một dự án AI được thiết kế để phân tích dữ li
 ## Tính năng chính
 
 1. **Xử lý dữ liệu quang học**:
-   - Tổ chức và xử lý dữ liệu hình ảnh từ các thiết bị di động.
-   - Tách vùng quan tâm (ROI) và chuẩn hóa hình ảnh.
+   - Tổ chức và xử lý dữ liệu hình ảnh từ các thiết bị di động (smartphones). 
+   - Tự động phát hiện và tách vùng quan tâm (ROI) chứa phản ứng hóa học.
+   - Áp dụng chuẩn hóa hình ảnh để giảm nhiễu và tăng tính nhất quán đầu vào.
 
 2. **Trích xuất đặc trưng**:
-   - Trích xuất các đặc trưng từ hình ảnh để phục vụ cho các bài toán phân loại và hồi quy.
+   - Trích xuất các đặc trưng màu sắc và kết cấu từ vùng phản ứng để sử dụng trong mô hình.
    - Sử dụng các kỹ thuật như GLCM, entropy, và histogram màu.
 
 3. **Huấn luyện mô hình**:
    - Huấn luyện các mô hình phân loại và hồi quy dựa trên các đặc trưng đã trích xuất.
-   - Sử dụng các thuật toán như Random Forest để phân tích dữ liệu.
-
+   - Hỗ trợ các thuật toán phổ biến:
+        + Random Forest
+        + SVM
+        + KNN
+        + MLP (Neural Network)
+        + XGBoost
+        + Logistic Regression
+        + Naive Bayes
+   - Đánh giá mô hình với cross-validation (Stratified K-fold), thống kê độ chính xác, F1-score và độ lệch chuẩn.
+   
 4. **Pipeline tự động**:
    - Thực hiện toàn bộ quy trình từ xử lý dữ liệu, trích xuất đặc trưng đến huấn luyện mô hình chỉ với một lệnh duy nhất.
 
@@ -60,26 +69,17 @@ VHL_Optics là một dự án AI được thiết kế để phân tích dữ li
    pip install -r requirements.txt
    ```
 3. **Chuẩn bị dữ liệu**:
-   Tạo thư mục data/full và đặt dữ liệu hình ảnh gốc vào đó.
+   Tạo thư mục data và đặt dữ liệu hình ảnh gốc vào đó.
 
 ## Hướng dẫn sử dụng
 1. Chạy toàn bộ pipeline
    Chạy toàn bộ quy trình xử lý dữ liệu, trích xuất đặc trưng và huấn luyện mô hình bằng lệnh sau:
    ```bash
-   python [main.py]
+   python src/main.py
    ```
-2. Thực hiện từng bước riêng lẻ
-   - **Xử lý dữ liệu**:
+2. Đánh giá mô hình và xuất biểu đồ
       ```bash
-      python src/processing.py
-      ```
-   - **Trích xuất đặc trưng**:
-      ```bash
-      python src/normalize.py
-      ```
-   - **Huấn luyện mô hình**:
-      ```bash
-      python src/model.py
+      python -m evaluation.evaluate_models
       ```
 
 ## Yêu cầu hệ thống
