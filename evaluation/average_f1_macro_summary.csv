@@ -1,0 +1,8 @@
+model,f1_macro
+random_forest,1.0
+xgboost,1.0
+knn,0.9744390961716572
+logistic_regression,0.9528232102915355
+svm,0.9486664240905505
+mlp,0.9337000999678111
+naive_bayes,0.8792981721326815
