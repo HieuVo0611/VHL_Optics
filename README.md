@@ -23,22 +23,27 @@ VHL_Optics là một dự án AI được thiết kế để phân tích dữ li
 
 ## Cấu trúc dự án
 ```
-   VHL_Optics/ 
-   ├── src/ 
-   │ ├── __init__.py      # Tệp khởi tạo module 
-   │ ├── config.py        # Cấu hình dự án 
-   │ ├── loading.py       # Tải và tạo metadata 
-   │ ├── processing.py    # Xử lý và tổ chức dữ liệu hình ảnh 
-   │ ├── normalize.py     # Trích xuất đặc trưng từ hình ảnh 
-   │ ├── model.py         # Huấn luyện mô hình phân loại và hồi quy 
-   │ ├── roi.py           # Xử lý vùng quan tâm (ROI) 
-   │ ├── squares.py       # Phát hiện các vùng hình vuông trong hình ảnh 
-   │ ├── main.py          # Pipeline tự động 
-   ├── data/              # Thư mục chứa dữ liệu 
-   │ ├── full/            # Dữ liệu hình ảnh gốc 
-   ├── requirements.txt   # Danh sách các thư viện cần thiết 
-   ├── README.md          # Tài liệu dự án 
-   ├── LICENSE            # Giấy phép sử dụng
+   VHL_Optics/
+├── data/
+│   ├── _uploadRGB_5phones_sorted/     # Dữ liệu gốc
+│   ├── square image/                  # Ảnh xử lý chuẩn hóa
+│   ├── csv/                           # Đặc trưng đầu vào cho mô hình
+│   └── models/                        # File mô hình .pkl và kết quả đánh giá
+├── evaluation/                        # Biểu đồ và bảng đánh giá mô hình
+│   ├── accuracy_per_model.png
+│   ├── f1_macro_per_model.png
+│   ├── average_accuracy_summary.csv
+│   └── average_f1_macro_summary.csv
+├── src/                               # Mã nguồn chính
+│   ├── config.py
+│   ├── processing.py
+│   ├── normalize.py
+│   ├── model.py
+│   ├── classifiers.py
+│   ├── evaluate_models.py
+│   └── predict.py
+├── requirements.txt
+└── README.md
 ```
 ## Hướng dẫn cài đặt
 
