@@ -29,11 +29,13 @@ VHL_Optics là một dự án AI được thiết kế để phân tích dữ li
 │   ├── square image/                  # Ảnh xử lý chuẩn hóa
 │   ├── csv/                           # Đặc trưng đầu vào cho mô hình
 │   └── models/                        # File mô hình .pkl và kết quả đánh giá
+│   └── ...
 ├── evaluation/                        # Biểu đồ và bảng đánh giá mô hình
 │   ├── accuracy_per_model.png
 │   ├── f1_macro_per_model.png
 │   ├── average_accuracy_summary.csv
 │   └── average_f1_macro_summary.csv
+│   └── ...
 ├── src/                               # Mã nguồn chính
 │   ├── config.py
 │   ├── processing.py
@@ -42,6 +44,7 @@ VHL_Optics là một dự án AI được thiết kế để phân tích dữ li
 │   ├── classifiers.py
 │   ├── evaluate_models.py
 │   └── predict.py
+│   └── ....
 ├── requirements.txt
 └── README.md
 ```
